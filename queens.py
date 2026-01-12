@@ -67,6 +67,11 @@ class QueensState:
         """Initializes the chessboard to have the given numbers of rows and columns,
         with no queens occupying any of its cells."""
         self._queens = 0
+        self._board = [[0 for _ in range(columns)] for _ in range(rows)]
+
+    def get_board(self):
+        """Returns a full copy of the board"""
+        return self._board.copy()
 
 
     def queen_count(self) -> int:

@@ -21,7 +21,12 @@ class TestQueensState(unittest.TestCase):
         state = QueensState(8, 8)
         self.assertEqual(state.queen_count(), 0)
 
-
+    def test_queen_board_initialization(self):
+        state = QueensState(8, 8)
+        board = state.get_board()
+        self.assertIsNotNone(board)
+        self.assertEqual(len(board), 8)
+        self.assertEqual(len(board[0]), 8)
 
 if __name__ == '__main__':
     unittest.main()
