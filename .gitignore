@@ -7,7 +7,6 @@ __pycache__
 *.coverage
 /venv
 .DS_Store
-flake.nix
 flake.lock
 .envrc
 .direnv
