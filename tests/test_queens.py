@@ -29,7 +29,13 @@ class TestQueensState(unittest.TestCase):
         self.assertEqual(len(board[0]), 8)
 
     def test_queens_positions(self):
-        pass
+        # Changing board directly is not intended
+        # But for ease of testing
+        self.state._board[0][0] = 1
+        queensPositions = self.state.queens()
+        self.assertIsNotNone(queensPositions[0])
+        self.assertEqual(queensPositions[0].row, 0)
+        self.assertEqual(queensPositions[0].column, 0)
 
 if __name__ == '__main__':
     unittest.main()
