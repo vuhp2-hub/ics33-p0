@@ -62,6 +62,7 @@
               venvShellHook
               pip
               pytest
+              coverage
 
               # Add whatever else you'd like here.
               # pkgs.basedpyright
