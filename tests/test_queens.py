@@ -11,7 +11,7 @@
 # like "test_queen_count", since it doesn't entirely test the "queen_count" method,
 # but instead focuses on just one aspect of how it behaves.  You'll want to do likewise.
 
-from queens import QueensState, Position
+from queens import QueensState, Position, DuplicateQueenError
 import unittest
 
 
@@ -72,6 +72,17 @@ class TestQueensState(unittest.TestCase):
         self.state._board[6][0] = 1
         self.assertEqual(self.state.any_queens_unsafe(), True)
 
+    def test_with_queens_added(self):
+        # Assignment
+        positions = [Position(row=0, column=1), Position(row=1, column=1)]
+        new = self.state.with_queens_added(positions)
+        self.assertEqual(new._board[0][1], 1)
+        self.assertEqual(new._board[1][1], 1)
+
+        # Duplicate Error
+        self.state = new
+        with self.assertRaises(DuplicateQueenError):
+            self.state.with_queens_added(positions)
 
 if __name__ == '__main__':
 
