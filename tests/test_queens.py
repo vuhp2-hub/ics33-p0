@@ -11,17 +11,14 @@
 # like "test_queen_count", since it doesn't entirely test the "queen_count" method,
 # but instead focuses on just one aspect of how it behaves.  You'll want to do likewise.
 
-from queens import QueensState, Position, DuplicateQueenError
+from queens import QueensState, Position, DuplicateQueenError, MissingQueenError
 import unittest
-
-
 
 class TestQueensState(unittest.TestCase):
     def setUp(self):
         self.state = QueensState(8,8)
     def test_queen_count_is_zero_initially(self):
         self.assertEqual(self.state.queen_count(), 0)
-
     def test_queen_board_initialization(self):
         board = self.state.get_board()
         self.assertIsNotNone(board)
@@ -76,14 +73,25 @@ class TestQueensState(unittest.TestCase):
         # Assignment
         positions = [Position(row=0, column=1), Position(row=1, column=1)]
         new = self.state.with_queens_added(positions)
-        self.assertEqual(new._board[0][1], 1)
-        self.assertEqual(new._board[1][1], 1)
+        self.assertEqual(new.has_queen(positions[0]), True)
+        self.assertEqual(new.has_queen(positions[1]), True)
 
         # Duplicate Error
         self.state = new
         with self.assertRaises(DuplicateQueenError):
             self.state.with_queens_added(positions)
+    def test_with_queens_removed(self):
+        positions = [Position(row=0, column=1), Position(row=1, column=1)]
+
+        # Missing Queen Error
+        with self.assertRaises(MissingQueenError):
+            self.state.with_queens_removed(positions)
+
+        self.state = self.state.with_queens_added(positions)
+        # Removing valid
+        self.state.with_queens_removed(positions)
+        self.assertEqual(self.state.has_queen(positions[0]), False)
+        self.assertEqual(self.state.has_queen(positions[1]), False)
 
 if __name__ == '__main__':
-
     unittest.main()

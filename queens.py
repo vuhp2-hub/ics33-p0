@@ -154,4 +154,12 @@ class QueensState:
         """Builds a new QueensState with queens removed from the given positions,
         without modifying 'self' in any way.  Raises a MissingQueenError when there
         is no queen in at least one of the given positions."""
-        pass
+        new_board = self.get_board()
+
+        for position in positions:
+            if new_board[position.row][position.column] == 0: raise MissingQueenError(position)
+            new_board[position.row][position.column] = 0
+
+        new_queens_state = type(self)(len(self._board), len(self._board[0]))
+        new_queens_state._board = new_board
+        return new_queens_state
