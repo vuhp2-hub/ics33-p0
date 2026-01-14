@@ -100,10 +100,38 @@ class QueensState:
             return True
         return False
 
+    def _check_occupation_diagonal(self, row: int, column: int, step_row: int, step_column: int) -> bool:
+        """Use recursion to check for diagonal"""
+        delta_applied_row = row + step_row
+        delta_applied_column = column + step_column
+        if delta_applied_row == len(self._board):
+            return False
+        if delta_applied_column == len(self._board[delta_applied_row]):
+            return False
+        if self._board[delta_applied_row][delta_applied_column] == 1:
+            return True
+        return self._check_occupation_diagonal(delta_applied_row, delta_applied_column, step_row, step_column)
+
     def any_queens_unsafe(self) -> bool:
         """Returns True if any queens on the chessboard are unsafe (i.e., they can
         be captured by at least one other queen on the chessboard), or False otherwise."""
-        pass
+
+        queen_positions = self.queens()
+
+        for i in range(len(queen_positions)):
+            current_row = queen_positions[i].row
+            current_column = queen_positions[i].column
+            diagonal_check = self._check_occupation_diagonal(current_row, current_column, 1, 1)
+            anti_diagonal_check = self._check_occupation_diagonal(current_row, current_column, -1, 1)
+            if diagonal_check or anti_diagonal_check:
+                return True
+            # check for same row and column
+            for j in range(i+1, len(queen_positions)):
+                if queen_positions[i].row == queen_positions[j] or queen_positions[i].column == queen_positions[j].column:
+                    return True
+
+            # check for row and column
+        return False
 
 
     def with_queens_added(self, positions: list[Position]) -> Self:
