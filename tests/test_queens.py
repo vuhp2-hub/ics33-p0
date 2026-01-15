@@ -80,6 +80,7 @@ class TestQueensState(unittest.TestCase):
         self.state = new
         with self.assertRaises(DuplicateQueenError):
             self.state.with_queens_added(positions)
+
     def test_with_queens_removed(self):
         positions = [Position(row=0, column=1), Position(row=1, column=1)]
 
@@ -92,6 +93,22 @@ class TestQueensState(unittest.TestCase):
         self.state = self.state.with_queens_removed(positions)
         self.assertEqual(self.state.has_queen(positions[0]), False)
         self.assertEqual(self.state.has_queen(positions[1]), False)
+
+    def test_queen_count_updates_after_add_and_remove(self):
+        positions = [Position(0, 1), Position(1, 3), Position(2, 5)]
+        s2 = self.state.with_queens_added(positions)
+        self.assertEqual(s2.queen_count(), 3)
+        self.assertEqual(self.state.queen_count(), 0)  # original unchanged
+
+        s3 = s2.with_queens_removed([positions[0]])
+        self.assertEqual(s3.queen_count(), 2)
+        self.assertEqual(s2.queen_count(), 3)          # still unchanged
+
+    def test_with_queens_added_is_immutable(self):
+        p = Position(0, 0)
+        s2 = self.state.with_queens_added([p])
+        self.assertFalse(self.state.has_queen(p))
+        self.assertTrue(s2.has_queen(p))
 
 if __name__ == '__main__':
     unittest.main()
