@@ -38,36 +38,36 @@ class TestQueensState(unittest.TestCase):
         self.state._board[0][0] = 1
         test_position_exists = Position(row=0, column=0)
         test_position_empty = Position(row=0, column=1)
-        self.assertEqual(self.state.has_queen(test_position_exists), True)
-        self.assertEqual(self.state.has_queen(test_position_empty), False)
+        self.assertTrue(self.state.has_queen(test_position_exists))
+        self.assertFalse(self.state.has_queen(test_position_empty))
 
     def test_any_queens_unsafe(self):
         # Safe
         self.state._board[0][0] = 1
         self.state._board[1][2] = 1
         self.state._board[2][4] = 1
-        self.assertEqual(self.state.any_queens_unsafe(), False)
+        self.assertFalse(self.state.any_queens_unsafe())
 
         # Row
         self.state._board[0][1] = 1
-        self.assertEqual(self.state.any_queens_unsafe(), True)
+        self.assertTrue(self.state.any_queens_unsafe())
 
         # Column
         self.state._board[0][1] = 0
         self.state._board[1][0] = 1
-        self.assertEqual(self.state.any_queens_unsafe(), True)
+        self.assertTrue(self.state.any_queens_unsafe())
 
         # Diagonal
         self.state = QueensState(8, 8)
         self.state._board[0][0] = 1
         self.state._board[7][7] = 1
-        self.assertEqual(self.state.any_queens_unsafe(), True)
+        self.assertTrue(self.state.any_queens_unsafe())
 
         # Anti-Diagonal
         self.state = QueensState(8, 8)
         self.state._board[0][6] = 1
         self.state._board[6][0] = 1
-        self.assertEqual(self.state.any_queens_unsafe(), True)
+        self.assertTrue(self.state.any_queens_unsafe())
 
         # Another Anti-Diagonal
         self.state = QueensState(8, 8)
@@ -155,8 +155,8 @@ class TestQueensState(unittest.TestCase):
         # Assignment
         positions = [Position(row=0, column=1), Position(row=1, column=1)]
         new = self.state.with_queens_added(positions)
-        self.assertEqual(new.has_queen(positions[0]), True)
-        self.assertEqual(new.has_queen(positions[1]), True)
+        self.assertTrue(new.has_queen(positions[0]))
+        self.assertTrue(new.has_queen(positions[1]))
 
         # Duplicate Error
         self.state = new
@@ -173,20 +173,21 @@ class TestQueensState(unittest.TestCase):
         self.state = self.state.with_queens_added(positions)
         # Removing valid
         self.state = self.state.with_queens_removed(positions)
-        self.assertEqual(self.state.has_queen(positions[0]), False)
-        self.assertEqual(self.state.has_queen(positions[1]), False)
+        self.assertFalse(self.state.has_queen(positions[0]))
+        self.assertFalse(self.state.has_queen(positions[1]))
 
     def test_queen_count_updates_after_add_and_remove(self):
         positions = [Position(0, 1), Position(1, 3), Position(2, 5)]
         s2 = self.state.with_queens_added(positions)
         self.assertEqual(s2.queen_count(), 3)
-        self.assertEqual(self.state.queen_count(), 0)  # original unchanged
-
+        # original unchanged
+        self.assertEqual(self.state.queen_count(), 0)
         s3 = s2.with_queens_removed([positions[0]])
         self.assertEqual(s3.queen_count(), 2)
-        self.assertEqual(s2.queen_count(), 3)          # still unchanged
+        self.assertEqual(s2.queen_count(), 3)
+        self.assertEqual(self.state.queen_count(), 0)
 
-    def test_with_queens_added_is_immutable(self):
+    def test_with_queens_added_is_immutable_has_queen(self):
         p = Position(0, 0)
         s2 = self.state.with_queens_added([p])
         self.assertFalse(self.state.has_queen(p))
