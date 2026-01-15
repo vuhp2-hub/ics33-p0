@@ -100,18 +100,6 @@ class QueensState:
             return True
         return False
 
-    def _check_occupation_diagonal(self, row: int, column: int, step_row: int, step_column: int) -> bool:
-        """Use recursion to check for diagonal"""
-        delta_applied_row = row + step_row
-        delta_applied_column = column + step_column
-        if delta_applied_row == len(self._board):
-            return False
-        if delta_applied_column == len(self._board[delta_applied_row]):
-            return False
-        if self._board[delta_applied_row][delta_applied_column] == 1:
-            return True
-        return self._check_occupation_diagonal(delta_applied_row, delta_applied_column, step_row, step_column)
-
     def any_queens_unsafe(self) -> bool:
         """Returns True if any queens on the chessboard are unsafe (i.e., they can
         be captured by at least one other queen on the chessboard), or False otherwise."""
@@ -119,18 +107,11 @@ class QueensState:
         queen_positions = self.queens()
 
         for i in range(len(queen_positions)):
-            current_row = queen_positions[i].row
-            current_column = queen_positions[i].column
-            diagonal_check = self._check_occupation_diagonal(current_row, current_column, 1, 1)
-            anti_diagonal_check = self._check_occupation_diagonal(current_row, current_column, -1, 1)
-            if diagonal_check or anti_diagonal_check:
-                return True
-            # check for same row and column
             for j in range(i+1, len(queen_positions)):
-                if queen_positions[i].row == queen_positions[j].row or queen_positions[i].column == queen_positions[j].column:
+                row_column_check = queen_positions[i].row == queen_positions[j].row or queen_positions[i].column == queen_positions[j].column
+                diagonal_check = abs(queen_positions[j].row - queen_positions[i].row) == abs(queen_positions[j].column - queen_positions[i].column)
+                if row_column_check or diagonal_check:
                     return True
-
-            # check for row and column
         return False
 
 
@@ -139,15 +120,17 @@ class QueensState:
         without modifying 'self' in any way.  Raises a DuplicateQueenError when
         there is already a queen in at least one of the given positions."""
         new_board = self.get_board()
+        queen_delta = 0
 
         for position in positions:
             if new_board[position.row][position.column] == 1: raise DuplicateQueenError(position)
             new_board[position.row][position.column] = 1
-            self._queens += 1
+            queen_delta += 1
 
         # had to use type(self) to satisfy type hint requirements
         new_queens_state = type(self)(len(self._board), len(self._board[0]))
         new_queens_state._board = new_board
+        new_queens_state._queens = self._queens + queen_delta
         return new_queens_state
 
 
@@ -156,12 +139,14 @@ class QueensState:
         without modifying 'self' in any way.  Raises a MissingQueenError when there
         is no queen in at least one of the given positions."""
         new_board = self.get_board()
+        queen_delta = 0
 
         for position in positions:
             if new_board[position.row][position.column] == 0: raise MissingQueenError(position)
             new_board[position.row][position.column] = 0
-            self._queens += 1
+            queen_delta -= 1
 
         new_queens_state = type(self)(len(self._board), len(self._board[0]))
         new_queens_state._board = new_board
+        new_queens_state._queens = self._queens + queen_delta
         return new_queens_state
