@@ -69,6 +69,88 @@ class TestQueensState(unittest.TestCase):
         self.state._board[6][0] = 1
         self.assertEqual(self.state.any_queens_unsafe(), True)
 
+        # Another Anti-Diagonal
+        self.state = QueensState(8, 8)
+        self.state._board[0][7] = 1
+        self.state._board[1][6] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # No queens
+        self.state = QueensState(8, 8)
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # Single queen
+        self.state = QueensState(8, 8)
+        self.state._board[3][4] = 1
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # Multiple queens, no conflicts
+        self.state = QueensState(8, 8)
+        self.state._board[0][0] = 1
+        self.state._board[1][2] = 1
+        self.state._board[2][4] = 1
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # Conflict in same row
+        self.state = QueensState(8, 8)
+        self.state._board[4][1] = 1
+        self.state._board[4][7] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # Conflict in same column
+        self.state = QueensState(8, 8)
+        self.state._board[1][5] = 1
+        self.state._board[7][5] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # Conflict on a diagonal
+        self.state = QueensState(8, 8)
+        self.state._board[0][0] = 1
+        self.state._board[7][7] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # Conflict on the other diagonal
+        self.state = QueensState(8, 8)
+        self.state._board[0][7] = 1
+        self.state._board[7][0] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # Conflict among many queens
+        self.state = QueensState(8, 8)
+        self.state._board[0][0] = 1
+        self.state._board[1][2] = 1
+        self.state._board[2][4] = 1
+        self.state._board[3][6] = 1
+        self.state._board[7][2] = 1
+        self.assertTrue(self.state.any_queens_unsafe())
+
+        # Known safe configuration
+        self.state = QueensState(8, 8)
+        safe_positions = [
+            Position(0, 0), Position(1, 4), Position(2, 7), Position(3, 5),
+            Position(4, 2), Position(5, 6), Position(6, 1), Position(7, 3)
+        ]
+        self.state = self.state.with_queens_added(safe_positions)
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # Close positions without conflict
+        self.state = QueensState(8, 8)
+        self.state._board[0][0] = 1
+        self.state._board[2][1] = 1
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # Another non-conflicting case
+        self.state = QueensState(8, 8)
+        self.state._board[0][7] = 1
+        self.state._board[2][4] = 1
+        self.assertFalse(self.state.any_queens_unsafe())
+
+        # More obvious non-conflicting
+        self.state = QueensState(8, 8)
+        self.state._board[0][7] = 1
+        self.state._board[3][1] = 1
+        self.assertFalse(self.state.any_queens_unsafe())
+
     def test_with_queens_added(self):
         # Assignment
         positions = [Position(row=0, column=1), Position(row=1, column=1)]
