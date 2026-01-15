@@ -71,7 +71,7 @@ class QueensState:
 
     def get_board(self):
         """Returns a full copy of the board"""
-        return self._board.copy()
+        return [row.copy() for row in self._board]
 
 
     def queen_count(self) -> int:
@@ -84,7 +84,7 @@ class QueensState:
         arranged in no particular order."""
         queensPositions = []
         for row in range(len(self._board)):
-            for col in range(len(self._board)):
+            for col in range(len(self._board[row])):
                 if self._board[row][col] == 1:
                     queensPositions.append(Position(row, col))
         return queensPositions
@@ -127,7 +127,7 @@ class QueensState:
                 return True
             # check for same row and column
             for j in range(i+1, len(queen_positions)):
-                if queen_positions[i].row == queen_positions[j] or queen_positions[i].column == queen_positions[j].column:
+                if queen_positions[i].row == queen_positions[j].row or queen_positions[i].column == queen_positions[j].column:
                     return True
 
             # check for row and column
@@ -143,6 +143,7 @@ class QueensState:
         for position in positions:
             if new_board[position.row][position.column] == 1: raise DuplicateQueenError(position)
             new_board[position.row][position.column] = 1
+            self._queens += 1
 
         # had to use type(self) to satisfy type hint requirements
         new_queens_state = type(self)(len(self._board), len(self._board[0]))
@@ -159,6 +160,7 @@ class QueensState:
         for position in positions:
             if new_board[position.row][position.column] == 0: raise MissingQueenError(position)
             new_board[position.row][position.column] = 0
+            self._queens += 1
 
         new_queens_state = type(self)(len(self._board), len(self._board[0]))
         new_queens_state._board = new_board

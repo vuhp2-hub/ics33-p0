@@ -89,7 +89,7 @@ class TestQueensState(unittest.TestCase):
 
         self.state = self.state.with_queens_added(positions)
         # Removing valid
-        self.state.with_queens_removed(positions)
+        self.state = self.state.with_queens_removed(positions)
         self.assertEqual(self.state.has_queen(positions[0]), False)
         self.assertEqual(self.state.has_queen(positions[1]), False)
 
